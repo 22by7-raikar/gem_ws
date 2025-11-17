@@ -12,6 +12,21 @@ This project implements a complete autonomous vehicle control system with three 
 
 ## How to Build and Run the Simulation
 
+### Clone the Repository
+
+This repository uses a git submodule for the POLARIS_GEM_e2 simulator. Clone with:
+
+```bash
+git clone --recursive https://github.com/22by7-raikar/gem_ws.git
+```
+
+If already cloned without `--recursive`, initialize the submodule:
+
+```bash
+cd gem_ws
+git submodule update --init --recursive
+```
+
 ### Prerequisites
 
 - ROS Noetic
@@ -23,7 +38,7 @@ This project implements a complete autonomous vehicle control system with three 
 ### Build the Workspace
 
 ```bash
-cd /home/apr/Personal/gem_ws
+cd gem_ws
 catkin build
 source devel/setup.bash
 ```
