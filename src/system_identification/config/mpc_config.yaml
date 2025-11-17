@@ -1,0 +1,36 @@
+# MPC Configuration for GEM Vehicle System Identification
+# All parameters for Model Predictive Control and path tracking
+
+vehicle:
+  wheelbase: 1.75  # meters - GEM vehicle wheelbase
+
+control:
+  dt: 0.05  # seconds - time step (50ms)
+  prediction_horizon: 10  # steps - MPC horizon
+  control_rate: 20  # Hz - control loop frequency
+
+constraints:
+  max_speed: 5.56  # m/s - maximum vehicle speed (20 km/h)
+  min_speed: -1.0  # m/s - maximum reverse speed
+  max_steering_angle: 0.5  # radians (~28.6 degrees)
+  max_speed_change: 1.0  # m/s per control step
+  max_cross_track_error: 1.0  # meters - path tracking constraint
+
+path_tracking:
+  reference_lookahead: 2  # number of waypoints to look ahead
+  max_steering_adjustment: 0.3  # max steering in pure pursuit fallback
+
+solver:
+  verbose: false
+  max_iterations: 1000
+  eps_abs: 1e-4
+  eps_rel: 1e-4
+
+cost_weights:
+  position_x: 10.0  # weight for X position tracking
+  position_y: 10.0  # weight for Y position tracking
+  yaw: 1.0  # weight for yaw angle
+  velocity: 0.1  # weight for velocity smoothness
+  steering: 0.01  # weight for steering smoothness
+  terminal_x: 10.0  # terminal state cost (X)
+  terminal_y: 10.0  # terminal state cost (Y)

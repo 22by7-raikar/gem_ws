@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# ROS
+build/
+devel/
+*.bag
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Model checkpoints (optional - keep if small)
+# *.pth
+
+# Data (optional - uncomment to ignore large datasets)
+# data/raw/*.csv
+src/POLARIS_GEM_e2/
