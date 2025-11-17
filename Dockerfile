@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     cmake \
     python3-pip \
     python3-dev \
+    x11-apps \
+    libgl1-mesa-glx \
     && rm -rf /var/lib/apt/lists/*
 
 # Install ROS Noetic
@@ -47,14 +49,16 @@ RUN pip3 install --upgrade pip && \
 RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 
 # Create workspace directory
-RUN mkdir -p /root/gem_ws
+RUN mkdir -p /root/gem_ws/src
 
 # Set working directory
 WORKDIR /root/gem_ws
 
-# Copy workspace contents (src, data, etc.)
-COPY src/ /root/gem_ws/src/
-COPY data/ /root/gem_ws/data/
+# Copy workspace contents
+COPY . /root/gem_ws/
+
+# Initialize and update submodules
+RUN cd /root/gem_ws && git init && git submodule update --init --recursive || echo "Submodule init skipped"
 
 # Build workspace
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"

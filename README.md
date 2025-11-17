@@ -215,38 +215,73 @@ For each 50ms control cycle:
 
 ---
 
-## Docker Support
+## Docker Support (Optional)
 
 ### Build Container
 
 ```bash
-cd /home/apr/Personal/gem_ws
+cd gem_ws
 docker build -t gem-mpc:latest .
 ```
 
 ### Run Container
 
+**Linux:**
 ```bash
-docker run -it \
+# Allow X11 forwarding
+xhost +local:docker
+
+docker run -it --rm \
     --env="DISPLAY=$DISPLAY" \
+    --env="QT_X11_NO_MITSHM=1" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-    -v $(pwd):/root/gem_ws \
+    --network host \
+    --privileged \
+    gem-mpc:latest
+```
+
+**macOS:**
+```bash
+# Install XQuartz first: brew install --cask xquartz
+# Start XQuartz and enable "Allow connections from network clients"
+
+IP=$(ifconfig en0 | grep inet | awk '$1=="inet" {print $2}')
+xhost + $IP
+
+docker run -it --rm \
+    --env="DISPLAY=$IP:0" \
+    --network host \
+    gem-mpc:latest
+```
+
+**Windows (WSL2):**
+```bash
+# Install VcXsrv or X410 for X11 forwarding
+export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
+
+docker run -it --rm \
+    --env="DISPLAY=$DISPLAY" \
+    --network host \
     gem-mpc:latest
 ```
 
 ### Inside Container
 
 ```bash
-cd /root/gem_ws
 source devel/setup.bash
 
-# Terminal 1: Start Gazebo
-roslaunch gem_gazebo gem_gazebo_rviz.launch gui:=true
+# Start Gazebo simulation
+roslaunch gem_gazebo gem_gazebo_rviz.launch gui:=true &
 
-# Terminal 2: Run path tracking
+# Wait for Gazebo to initialize (10-15 seconds)
+sleep 15
+
+# Run path tracking
 python3 src/system_identification/scripts/control/csv_path_tracker.py \
     data/raw/wps.csv data/models/vehicle_dynamics_model.pth
 ```
+
+**Note:** GUI support requires X11 forwarding. If Gazebo fails to start, you can still use the container for training/analysis with `gui:=false`.
 
 **Dockerfile includes:**
 - ROS Noetic desktop full
